@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION["admin"])) {
+    ?>
+    <script type="text/javascript">
+        window.location = "index.php";
+    </script>
+    <?php
+}
+
 include "conn.php";
 include("./header.php");
 $id = $_GET["id"];
@@ -12,8 +21,8 @@ while ($row = mysqli_fetch_array($res)) {
 
 <div id="content">
     <div id="content-header">
-        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-                Home</a></div>
+        <div id="breadcrumb"><a href="#" class="tip-bottom"><i class="icon-home"></i>
+                Edit Unit</a></div>
     </div>
 
     <div class="container-fluid">
@@ -62,17 +71,32 @@ while ($row = mysqli_fetch_array($res)) {
 
 <?php
 if (isset($_POST["submit1"])) {
-    mysqli_query($link, "UPDATE unit SET units='$_POST[unitname]' WHERE id=$id") or die(mysqli_error($link));
+    // Escape dữ liệu để an toàn với SQL
+    $new_unitname = mysqli_real_escape_string($link, $_POST["unitname"]);
+
+    // Lấy tên cũ từ database trước khi cập nhật
+    $res_old = mysqli_query($link, "SELECT units FROM unit WHERE id=$id");
+    $row_old = mysqli_fetch_assoc($res_old);
+    $old_unitname = $row_old["units"];
+
+    // Cập nhật tên đơn vị
+    mysqli_query($link, "UPDATE unit SET units='$new_unitname' WHERE id=$id") or die(mysqli_error($link));
+
+    // Ghi log vào bảng recent_activities
+    $activity_description = "Unit ID $id: Unit name updated from '$old_unitname' to '$new_unitname'";
+    $activity_description = mysqli_real_escape_string($link, $activity_description);
+    mysqli_query($link, "INSERT INTO recent_activities (activity_description) VALUES ('$activity_description')") or die(mysqli_error($link));
     ?>
     <script type="text/javascript">
         document.getElementById("success").style.display = "block";
         setTimeout(function () {
-            window.location="add_new_unit.php";
+            window.location = "add_new_unit.php";
         }, 1000);
     </script>
     <?php
 }
 ?>
+
 
 <?php
 include("./footer.php");

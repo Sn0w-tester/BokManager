@@ -21,7 +21,7 @@
 <div id="header">
 
     <h2 style="color: white;position: absolute">
-        <a href="dashboard.html" style="color:white; margin-left: 30px; margin-top: 40px">PHP IMS</a>
+        <a href="dashboard.html" style="color:white; margin-left: 30px; margin-top: 40px">Manager</a>
     </h2>
 </div>
 
@@ -34,11 +34,7 @@
             <a title="" href="#" data-toggle="dropdown" data-target="#profile-messages" class="dropdown-toggle"><i
                     class="icon icon-user"></i> <span class="text">Welcome User</span><b class="caret"></b></a>
             <ul class="dropdown-menu">
-                <li><a href="#"><i class="icon-user"></i> My Profile</a></li>
-                <li class="divider"></li>
-                <li><a href="#"><i class="icon-check"></i> My Tasks</a></li>
-                <li class="divider"></li>
-                <li><a href="login.html"><i class="icon-key"></i> Log Out</a></li>
+                <li><a href="logout.php"><i class="icon-key"></i> Log Out</a></li>
             </ul>
         </li>
 
@@ -49,24 +45,32 @@
 <!--sidebar-menu-->
 <div id="sidebar">
     <ul>
-        <li class="active">
-            <a href="index.html"><i class="icon icon-home"></i><span>Dashboard</span></a>
+        <li class="">
+            <a href="dashboard.php"><i class="icon icon-home"></i><span>Dashboard</span></a>
         </li>
-
-        <li class="submenu"><a href="#"><i class="icon icon-th-list"></i> <span>Forms</span> <span
-                class="label label-important">3</span></a>
-            <ul>
-                <li><a href="form-common.html">Basic Form</a></li>
-                <li><a href="form-validation.html">Form with Validation</a></li>
-                <li><a href="form-wizard.html">Form with Wizard</a></li>
-            </ul>
+        <li class="">
+            <a href="purchase_master.php"><i class="icon icon-home"></i><span>Purchase Master</span></a>
         </li>
-
+        <li class="">
+            <a href="sales_master.php"><i class="icon icon-home"></i><span>Sales Master</span></a>
+        </li>
+        <li class="">
+            <a href="purchase_report.php"><i class="icon icon-home"></i><span>Purchase Report</span></a>
+        </li>
+        <li class="">
+            <a href="view_bills.php"><i class="icon icon-home"></i><span>Sales Report & Return Product</span></a>
+        </li>
+        <li class="">
+            <a href="stock_master.php"><i class="icon icon-home"></i><span>Stock Master</span></a>
+        </li>
+        <li class="">
+            <a href="return_product_list.php"><i class="icon icon-home"></i><span>Return Product Lists</span></a>
+        </li>
     </ul>
 </div>
 <!--sidebar-menu-->
 <div id="search">
 
-        <a href="index.html" style="color:white"><i class="icon icon-share-alt"></i><span>LogOut</span></a>
+        <a href="logout.php" style="color:white"><i class="icon icon-share-alt"></i><span>LogOut</span></a>
 
 </div>

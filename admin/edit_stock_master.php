@@ -1,4 +1,12 @@
 <?php
+session_start();
+if (!isset($_SESSION["admin"])) {
+    ?>
+    <script type="text/javascript">
+        window.location = "index.php";
+    </script>
+    <?php
+}
 include "./header.php";
 include "conn.php";
 $id = $_GET["id"];
@@ -22,7 +30,7 @@ while ($row = mysqli_fetch_array($res)) {
 
 <div id="content">
     <div id="content-header">
-        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-user"></i>
+        <div id="breadcrumb"><a href="#" class="tip-bottom"><i class="icon-user"></i>
                 Edit Stock Price</a></div>
     </div>
 
@@ -105,7 +113,18 @@ while ($row = mysqli_fetch_array($res)) {
 
 <?php
 if (isset($_POST["submit1"])) {
-    mysqli_query($link, "UPDATE stock_master SET product_selling_price='$_POST[product_selling_price]' WHERE id=$id") or die(mysqli_error($link));
+    // Escape dữ liệu để an toàn với SQL
+    $new_price = mysqli_real_escape_string($link, $_POST["product_selling_price"]);
+
+    // Lấy giá cũ để ghi log
+    $old_price = $product_selling_price;
+
+    // Cập nhật giá mới
+    mysqli_query($link, "UPDATE stock_master SET product_selling_price='$new_price' WHERE id=$id") or die(mysqli_error($link));
+
+    // Ghi log vào bảng recent_activities
+    $activity_description = "Stock ID $id: Selling price updated from $old_price to $new_price";
+    mysqli_query($link, "INSERT INTO recent_activities (activity_description) VALUES ('$activity_description')") or die(mysqli_error($link));
     ?>
     <script type="text/javascript">
         document.getElementById("success").style.display = "block";

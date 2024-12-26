@@ -1,24 +1,37 @@
 <?php
+session_start();
+if (!isset($_SESSION["admin"])) {
+    ?>
+    <script type="text/javascript">
+        window.location = "index.php";
+    </script>
+    <?php
+}
 include "./header.php";
 include "conn.php";
+
 $id = $_GET["id"];
 $companyname = "";
 $productname = "";
+$category = "";
 $unit = "";
 $packingsize = "";
 
+// Lấy thông tin sách hiện tại để hiển thị
 $res = mysqli_query($link, "SELECT * FROM books WHERE id=$id");
 while ($row = mysqli_fetch_array($res)) {
     $companyname = $row["company_name"];
     $productname = $row["product_name"];
+    $category = $row["category"];
     $unit = $row["unit"];
     $packingsize = $row["packing_size"];
 }
+
 ?>
 
 <div id="content">
     <div id="content-header">
-        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-user"></i>
+        <div id="breadcrumb"><a href="#" class="tip-bottom"><i class="icon-user"></i>
                 Edit Book</a></div>
     </div>
 
@@ -47,12 +60,26 @@ while ($row = mysqli_fetch_array($res)) {
                                 </div>
                             </div>
 
-
                             <div class="control-group">
                                 <label class="control-label">Enter Book Name :</label>
                                 <div class="controls">
                                     <input type="text" class="span11" placeholder="Book name..." name="productname"
                                         value="<?php echo $productname ?>" />
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">Select Category :</label>
+                                <div class="controls">
+                                    <select class="span11" name="categoryname">
+                                        <?php
+                                        $res = mysqli_query($link, "SELECT * FROM categories");
+                                        while ($row = mysqli_fetch_array($res)) {
+                                            $selected = ($row["category_name"] == $category) ? "selected" : "";
+                                            echo "<option value='" . $row["category_name"] . "' $selected>" . $row["category_name"] . "</option>";
+                                        }
+                                        ?>
+                                    </select>
                                 </div>
                             </div>
 
@@ -80,7 +107,7 @@ while ($row = mysqli_fetch_array($res)) {
                             </div>
 
                             <div class="alert alert-danger" id="error" style="display:none">
-                                <strong>This Books Already Exist!</strong> Please try another.
+                                <strong>This Book Already Exists!</strong> Please try another.
                             </div>
 
                             <div class="form-actions">
@@ -103,7 +130,21 @@ while ($row = mysqli_fetch_array($res)) {
 
 <?php
 if (isset($_POST["submit1"])) {
-    mysqli_query($link, "UPDATE books SET company_name='$_POST[companyname]',product_name='$_POST[productname]',unit='$_POST[unit]',packing_size='$_POST[packingsize]' WHERE id=$id") or die(mysqli_error($link));
+    // Cập nhật thông tin sách
+    mysqli_query($link, "UPDATE books SET company_name='$_POST[companyname]', product_name='$_POST[productname]', category='$_POST[categoryname]', unit='$_POST[unit]', packing_size='$_POST[packingsize]' WHERE id=$id") or die(mysqli_error($link));
+
+    // Escape các giá trị để tránh lỗi SQL
+    $companyname = mysqli_real_escape_string($link, $_POST["companyname"]);
+    $productname = mysqli_real_escape_string($link, $_POST["productname"]);
+    $categoryname = mysqli_real_escape_string($link, $_POST["categoryname"]);
+    $unit = mysqli_real_escape_string($link, $_POST["unit"]);
+    $packingsize = mysqli_real_escape_string($link, $_POST["packingsize"]);
+
+    // Tạo activity log và escape chuỗi mô tả
+    $activity_description = mysqli_real_escape_string($link, "Book ID $id updated: Company='$companyname', Product='$productname', Category='$categoryname', Unit='$unit', Packing Size='$packingsize'");
+
+    // Thực hiện chèn vào bảng recent_activities
+    mysqli_query($link, "INSERT INTO recent_activities (activity_description) VALUES ('$activity_description')") or die(mysqli_error($link));
     ?>
     <script type="text/javascript">
         document.getElementById("error").style.display = "none";

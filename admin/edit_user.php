@@ -1,4 +1,13 @@
 <?php
+session_start();
+if (!isset($_SESSION["admin"])) {
+    ?>
+    <script type="text/javascript">
+        window.location = "index.php";
+    </script>
+    <?php
+}
+
 include "conn.php";
 include("./header.php");
 $id = $_GET["id"];
@@ -22,8 +31,8 @@ while ($row = mysqli_fetch_array($res)) {
 
 <div id="content">
     <div id="content-header">
-        <div id="breadcrumb"><a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i>
-                Home</a></div>
+        <div id="breadcrumb"><a href="#" class="tip-bottom"><i class="icon-home"></i>
+                Edit User</a></div>
     </div>
 
     <div class="container-fluid">
@@ -114,17 +123,59 @@ while ($row = mysqli_fetch_array($res)) {
 
 <?php
 if (isset($_POST["submit1"])) {
-    mysqli_query($link, "UPDATE user_registration SET firstname='$_POST[firstname]',lastname='$_POST[lastname]',password='$_POST[password]',role='$_POST[role]',status='$_POST[status]' WHERE id=$id") or die(mysqli_error($link));
+    // Escape dữ liệu đầu vào để tránh SQL Injection
+    $firstname_new = mysqli_real_escape_string($link, $_POST["firstname"]);
+    $lastname_new = mysqli_real_escape_string($link, $_POST["lastname"]);
+    $password_new = mysqli_real_escape_string($link, $_POST["password"]);
+    $role_new = mysqli_real_escape_string($link, $_POST["role"]);
+    $status_new = mysqli_real_escape_string($link, $_POST["status"]);
+
+    // Lấy dữ liệu cũ từ database
+    $res_old = mysqli_query($link, "SELECT * FROM user_registration WHERE id=$id");
+    $row_old = mysqli_fetch_assoc($res_old);
+
+    $firstname_old = $row_old["firstname"];
+    $lastname_old = $row_old["lastname"];
+    $password_old = $row_old["password"];
+    $role_old = $row_old["role"];
+    $status_old = $row_old["status"];
+
+    // Cập nhật dữ liệu người dùng
+    mysqli_query($link, "UPDATE user_registration SET 
+        firstname='$firstname_new',
+        lastname='$lastname_new',
+        password='$password_new',
+        role='$role_new',
+        status='$status_new' 
+        WHERE id=$id") or die(mysqli_error($link));
+
+    // Ghi log vào bảng recent_activities
+    $activity_description = "User '$username' updated: ";
+    $changes = [];
+
+    if ($firstname_old != $firstname_new) $changes[] = "First Name changed from '$firstname_old' to '$firstname_new'";
+    if ($lastname_old != $lastname_new) $changes[] = "Last Name changed from '$lastname_old' to '$lastname_new'";
+    if ($password_old != $password_new) $changes[] = "Password updated";
+    if ($role_old != $role_new) $changes[] = "Role changed from '$role_old' to '$role_new'";
+    if ($status_old != $status_new) $changes[] = "Status changed from '$status_old' to '$status_new'";
+
+    if (!empty($changes)) {
+        $activity_description .= implode(", ", $changes);
+        $activity_description = mysqli_real_escape_string($link, $activity_description);
+        mysqli_query($link, "INSERT INTO recent_activities (activity_description) VALUES ('$activity_description')") or die(mysqli_error($link));
+    }
+
     ?>
     <script type="text/javascript">
         document.getElementById("success").style.display = "block";
         setTimeout(function () {
-            window.location="add_new_user.php";
+            window.location = "add_new_user.php";
         }, 1000);
     </script>
     <?php
 }
 ?>
+
 
 <?php
 include("./footer.php");

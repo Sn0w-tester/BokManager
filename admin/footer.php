@@ -1,7 +1,7 @@
 <!--Footer-part-->
 
 <div class="row-fluid">
-    <div id="footer" class="span12" style="color:white"> Designed And Developed By: Your Name</div>
+    <div id="footer" class="span12" style="color:white"> Designed And Developed By: 2101102 - Nguyen Duy Tan</div>
 </div>
 
 <!--end-Footer-part-->
@@ -29,3 +29,49 @@
 <script src="js/matrix.tables.js"></script>
 </body>
 </html>
+
+
+<style type="text/css">
+    .form-inline .form-group{display:inline-block;margin-bottom:0;vertical-align:middle}
+    .form-inline .form-control{display:inline-block;width:auto;vertical-align:middle}
+    .form-inline .form-control-static{display:inline-block}
+    .form-inline .input-group{display:inline-table;vertical-align:middle}
+    .form-inline .input-group .form-control,.form-inline .input-group .input-group-addon,.form-inline .input-group .input-group-btn{width:auto}
+    .form-inline .input-group>.form-control{width:100%}
+    .form-inline .control-label{margin-bottom:0;vertical-align:middle}
+    .form-inline .checkbox,.form-inline .radio{display:inline-block;margin-top:0;margin-bottom:0;vertical-align:middle}
+    .form-inline .checkbox label,.form-inline .radio label{padding-left:0}
+    .form-inline .checkbox input[type=checkbox],.form-inline .radio input[type=radio]{position:relative;margin-left:0}
+    .form-inline .has-feedback .form-control-feedback{top:0}
+</style>
+
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-latest.js"></script>
+<script src="datepicker/jquery-ui.js"></script>
+
+<script type="text/javascript">
+    $(function() {
+        $("#dt").datepicker({
+            dateFormat: 'yy-mm-dd',
+            defaultDate: "+1w",
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1,
+            startDate: '2019-12-05',
+            onClose: function( selectedDate ) {
+                $("#dt2").datepicker("option","minDate",selectedDate);
+            }
+        });
+        $("#dt2").datepicker({
+            dateFormat: 'yy-mm-dd',
+            defaultDate: "+1w",
+            changeMonth: true,
+            changeYear: true,
+            numberOfMonths: 1
+
+        });
+    });
+
+
+
+</script>
